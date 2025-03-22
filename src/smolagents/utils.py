@@ -145,14 +145,14 @@ def parse_json_blob(json_blob: str) -> Tuple[Dict[str, str], str]:
         return json_data, json_blob[:first_accolade_index]
     except json.JSONDecodeError as e:
         place = e.pos
-        if json_blob[place - 1 : place + 2] == "},\n":
+        if json_data[place - 1 : place + 2] == "},\n":
             raise ValueError(
                 "JSON is invalid: you probably tried to provide multiple tool calls in one action. PROVIDE ONLY ONE TOOL CALL."
             )
         raise ValueError(
             f"The JSON blob you used is invalid due to the following error: {e}.\n"
-            f"JSON blob was: {json_blob}, decoding failed on that specific part of the blob:\n"
-            f"'{json_blob[place - 4 : place + 5]}'."
+            f"JSON blob was: {json_data}, decoding failed on that specific part of the blob:\n"
+            f"'{json_data[place - 4 : place + 5]}'."
         )
 
 
@@ -170,7 +170,7 @@ def parse_code_blobs(text: str) -> str:
     Raises:
         ValueError: If no valid code block is found in the text.
     """
-    pattern = r"```(?:py|python)?\n(.*?)\n```"
+    pattern = r"```(?:py|python)?\n(.*?)```"
     matches = re.findall(pattern, text, re.DOTALL)
     if matches:
         return "\n\n".join(match.strip() for match in matches)
